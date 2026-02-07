@@ -6,8 +6,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   // Enable CORS for frontend
   app.enableCors({
-    origin: 'http://192.168.1.61:5173', // React dev server (Vite)
-    credentials: true,
+    origin: '*', // React dev server (Vite)
+    // credentials: true,
   });
 
   await app.listen(3000);
