@@ -11,9 +11,9 @@ export class StreamController {
     @Param('videoId') videoId: string,
     @Res() res: Response,
   ) {
-    res.setHeader('Content-Type', 'video/mp4');
-    res.setHeader('Accept-Ranges', 'bytes');
-    res.setHeader('Cache-Control', 'no-cache');
+    // res.setHeader('Content-Type', 'video/mp4');
+    // res.setHeader('Accept-Ranges', 'bytes');
+    // res.setHeader('Cache-Control', 'no-cache');
     console.log("🚀 ~ file: stream.controller.ts:14 ~ StreamController ~ stream ~ videoId", videoId)
     this.streamService.stream(videoId, res);
   }
