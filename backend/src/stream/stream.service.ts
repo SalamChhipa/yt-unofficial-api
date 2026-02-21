@@ -219,7 +219,7 @@ export class StreamService {
   // ===============================
   // MAIN STREAM FUNCTION
   // ===============================
-  async stream(videoId: string, res: any) {
+  async stream(videoId: string,req:any, res: any) {
 
     const filePath = path.join(this.MUSIC_DIR, `${videoId}.mp3`);
     const url = `https://www.youtube.com/watch?v=${videoId}`;
@@ -237,7 +237,8 @@ export class StreamService {
         'Accept-Ranges': 'bytes',
       });
 
-      return fs.createReadStream(filePath).pipe(res);
+      // return fs.createReadStream(filePath).pipe(res);
+      return this.streamWithSeek(filePath, req, res);
     }
 
     // 🔥 3️⃣ Download first
@@ -264,7 +265,9 @@ export class StreamService {
       'Accept-Ranges': 'bytes',
     });
 
-    return fs.createReadStream(filePath).pipe(res);
+    // return fs.createReadStream(filePath).pipe(res);
+      return this.streamWithSeek(filePath, req, res);
+
   }
 
   // ===============================
@@ -366,4 +369,41 @@ export class StreamService {
     });
   }
 
+  private streamWithSeek(filePath: string, req: any, res: any) {
+  const stat = fs.statSync(filePath);
+  const fileSize = stat.size;
+  const range = req.headers.range;
+
+  if (!range) {
+    res.writeHead(200, {
+      'Content-Length': fileSize,
+      'Content-Type': 'audio/mpeg',
+      'Accept-Ranges': 'bytes',
+    });
+    fs.createReadStream(filePath).pipe(res);
+    return;
+  }
+
+  const parts = range.replace(/bytes=/, '').split('-');
+  const start = parseInt(parts[0], 10);
+  const end = parts[1]
+    ? parseInt(parts[1], 10)
+    : fileSize - 1;
+
+  if (start >= fileSize) {
+    res.status(416).send('Requested range not satisfiable');
+    return;
+  }
+
+  const chunkSize = end - start + 1;
+
+  res.writeHead(206, {
+    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+    'Accept-Ranges': 'bytes',
+    'Content-Length': chunkSize,
+    'Content-Type': 'audio/mpeg',
+  });
+
+  fs.createReadStream(filePath, { start, end }).pipe(res);
+}
 }

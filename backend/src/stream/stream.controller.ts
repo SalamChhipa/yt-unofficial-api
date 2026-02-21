@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Param, Req, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { StreamService } from './stream.service';
 
@@ -10,11 +10,12 @@ export class StreamController {
   stream(
     @Param('videoId') videoId: string,
     @Res() res: Response,
+    @Req() req: Request,
   ) {
     // res.setHeader('Content-Type', 'video/mp4');
     // res.setHeader('Accept-Ranges', 'bytes');
     // res.setHeader('Cache-Control', 'no-cache');
     console.log("🚀 ~ file: stream.controller.ts:14 ~ StreamController ~ stream ~ videoId", videoId)
-    this.streamService.stream(videoId, res);
+    this.streamService.stream(videoId,req, res);
   }
 }

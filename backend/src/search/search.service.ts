@@ -32,7 +32,7 @@ export class SearchService {
   async searchSongs(query: string) {
     return new Promise((resolve, reject) => {
       exec(
-        `docker exec -i vpn-test yt-dlp "ytsearch10:${query}" --flat-playlist --dump-json`,
+        `docker exec -i vpn-test yt-dlp "ytsearch10:${query}" --flat-playlist --dump-json --match-filter "duration >= 60 & duration <= 600"`,
         (err, stdout) => {
           if (err) return reject(err);
 

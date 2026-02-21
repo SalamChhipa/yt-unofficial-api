@@ -11,7 +11,7 @@ export class SongService {
         'exec',
         'vpn-test',
         'yt-dlp',
-        '-j',                 // JSON metadata only
+        '-j',
         '--no-playlist',
         url,
       ]);
